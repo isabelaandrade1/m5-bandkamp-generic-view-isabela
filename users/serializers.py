@@ -1,32 +1,40 @@
 from rest_framework import serializers
-from rest_framework.validators import UniqueValidator
 from .models import User
-
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class UserSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
-    username = serializers.CharField(
-        validators=[
-            UniqueValidator(
-                queryset=User.objects.all(),
-                message="A user with that username already exists.",
-            )
-        ],
-    )
-    email = serializers.EmailField(
-        validators=[UniqueValidator(queryset=User.objects.all())],
-    )
-    password = serializers.CharField(write_only=True)
-    full_name = serializers.CharField(max_length=50, required=False)
-    artistic_name = serializers.CharField(max_length=50)
+    username = serializers.CharField(max_length=20)
+    email = serializers.CharField(max_length=127)
+    password = serializers.CharField(max_length=127, write_only=True)
+    first_name = serializers.CharField()
+    last_name = serializers.CharField()
+    birthdate = serializers.DateField(required=False, allow_null=True, default=None)
+    is_employee = serializers.BooleanField(default=False, allow_null=True)
+    is_superuser = serializers.BooleanField(read_only=True)
 
-    def create(self, validated_data: dict) -> User:
-        return User.objects.create_user(**validated_data)
+    def create(self, validated_data):
+        is_employee = validated_data.pop("is_employee", False)
 
-    def update(self, instance: User, validated_data: dict) -> User:
-        for key, value in validated_data.items():
-            setattr(instance, key, value)
+        if is_employee:
+            sup_user = User.objects.create_superuser(**validated_data, is_employee=True)
+            return sup_user
+        return User.objects.create_user(**validated_data, is_employee=False)
 
-        instance.save()
+    def validate_username(self, username):
+        if User.objects.filter(username=username).exists():
+            raise serializers.ValidationError(detail="username already taken.")
+        return username
 
-        return instance
+    def validate_email(self, email):
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(detail="email already registered.")
+        return email
+
+
+class JWTSerializer(TokenObtainPairSerializer):
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+        token["is_superuser"] = user.is_superuser
+        return token

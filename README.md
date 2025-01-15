@@ -1,79 +1,74 @@
-# M5 - BandKamp Generic View
+# M5 - Kenzie Buster
 
-## Preparando ambiente para execução dos testes
+## Instalação dos pacotes de teste
 
-1. Verifique se os pacotes **pytest**, **pytest-testdox** e/ou **pytest-django** estão instalados globalmente em seu sistema:
+- Verifique se os pacotes `pytest` e/ou `pytest-testdox` estão instalados globalmente em seu sistema:
 ```shell
 pip list
 ```
-
-2. Caso eles apareçam na listagem, rode os comandos abaixo para realizar a desinstalação:
-
+- Caso seja listado o `pytest` e/ou `pytest-testdox` e/ou `pytest-django` em seu ambiente global, utilize os seguintes comando para desinstalá-los globalmente:
 ```shell
-pip uninstall pytest pytest-testdox pytest-django -y
+pip uninstall pytest
 ```
 
-3. Após isso, crie seu ambiente virtual:
 ```shell
+pip uninstall pytest-testdox
+```
+
+```shell
+pip uninstall pytest-django
+```
+
+A partir disso, prossiga com os passos:
+
+1. Crie seu ambiente virtual:
+```bash
 python -m venv venv
 ```
 
-4. Ative seu ambiente virtual:
-
-```shell
-# Linux e Mac:
+2. Ative seu venv:
+```bash
+# linux:
 source venv/bin/activate
 
-# Windows (PowerShell):
+# windows:
 .\venv\Scripts\activate
-
-# Windows (GitBash):
-source venv/Scripts/activate
 ```
 
-5. Instale as bibliotecas necessárias:
-
+3. Instale o pacote `pytest-testdox`:
 ```shell
 pip install pytest-testdox pytest-django
 ```
 
+5. Vá até o arquivo `pytest.ini` e modifique o nome do projeto `my_project_name.settings` para o nome do **seu_projeto**.settings (onde se encontra o settings.py)
 
-## Execução dos testes:
-
-Como este projeto se trata de uma refatoração, não terá divisão de testes por tarefa, pois o objetivo é que todos os testes continuem passando após a refatoração.
-Deste modo, para rodar a bateria de todos os testes, utilize:
+4. Agora é só rodar os testes no diretório principal do projeto:
 ```shell
 pytest --testdox -vvs
 ```
----
 
-Caso você tenha interesse em rodar apenas um diretório de testes específico, utilize os comandos abaixo:
 
-Users:
+
+## Rodando os testes de cada tarefa isoladamente
+
+Ao fim de cada tarefa será possível executar uma suite de testes direcionada àquela tarefa específica. Lembre-se de sempre estar com o **virtual enviroment (venv) ativado**.
+
+- Rodando testes da Tarefa 1:
 ```python
-pytest --testdox -vvs tests/users/
+pytest --testdox -vvs tests/tarefas/t1/
 ```
 
-Albums:
+- Rodando testes da Tarefa 2:
 ```python
-pytest --testdox -vvs tests/albums/
+pytest --testdox -vvs tests/tarefas/t2/
 ```
 
-Songs:
+- Rodando testes da Tarefa 3:
 ```python
-pytest --testdox -vvs tests/songs/
+pytest --testdox -vvs tests/tarefas/t3/
 ```
 
----
-
-Você também pode rodar cada método de teste isoladamente:
-
-```shell
-pytest --testdox -vvs caminho/para/o/arquivo/de/teste::NomeDaClasse::nome_do_metodo_de_teste
-```
-
-**Exemplo**: executar somente "test_user_login_without_required_fields".
-
-```shell
-pytest --testdox -vvs tests/users/test_login_view.py::UserLoginViewTest::test_user_login_without_required_fields
+- Rodando testes da Tarefa 4:
+```python
+pytest --testdox -vvs tests/tarefas/t4/
 ```

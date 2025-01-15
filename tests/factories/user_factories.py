@@ -1,22 +1,38 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import AbstractUser
 from rest_framework_simplejwt.tokens import RefreshToken
-from users.models import User as UserModel
 
 User: AbstractUser = get_user_model()
 
 
-def create_user_with_token(user_data=None) -> tuple[UserModel, RefreshToken]:
-    if not user_data:
-        user_data = {
+def create_employee_with_token(employee_data=None) -> tuple[AbstractUser, RefreshToken]:
+    if not employee_data:
+        employee_data = {
             "username": "lucira_buster",
             "email": "lucira_buster@kenziebuster.com",
-            "full_name": "Lucira",
-            "artistic_name": "Buster",
+            "birthdate": "1999-09-09",
+            "first_name": "Lucira",
+            "last_name": "Buster",
             "password": "1234",
+            "is_employee": True,
         }
 
-    user = User.objects.create_superuser(**user_data)
-    user_token = RefreshToken.for_user(user)
+    employee = User.objects.create_superuser(**employee_data)
+    employee_token = RefreshToken.for_user(employee)
 
-    return user, user_token
+    return employee, employee_token
+
+
+def create_non_employee_with_token() -> tuple[AbstractUser, RefreshToken]:
+    non_employee_data = {
+        "username": "lucira_common",
+        "email": "lucira_common@mail.com",
+        "birthdate": "1999-09-09",
+        "first_name": "Lucira",
+        "last_name": "Comum",
+        "password": "1111",
+    }
+    non_employee = User.objects.create_user(**non_employee_data)
+    non_employee_token = RefreshToken.for_user(non_employee)
+
+    return non_employee, non_employee_token
