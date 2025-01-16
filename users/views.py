@@ -1,9 +1,6 @@
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, RetrieveAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.views import APIView
-from rest_framework.request import Request
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from users.permissions import PermissionsPersonalized
@@ -17,15 +14,15 @@ class UserView(GenericAPIView, CreateModelMixin):
     def post(self, request, *args, **kwargs):
         return self.create(request, *args, **kwargs)
 
-class UserDetailView(APIView):
+class UserDetailView(RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
     authentication_classes = [JWTAuthentication]
     permission_classes = [PermissionsPersonalized]
 
-    def get(self, request: Request, user_id: int) -> Response:
-        user = User.objects.get(id=user_id)
-        self.check_object_permissions(request, user)
-        serializer = UserSerializer(user)
-        return Response(serializer.data, status.HTTP_200_OK)
+    def get_object(self):
+        user_id = self.kwargs['user_id']
+        return self.queryset.get(id=user_id)
 
 class UserLogin(TokenObtainPairView):
     serializer_class = JWTSerializer
