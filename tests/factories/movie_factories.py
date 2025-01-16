@@ -1,11 +1,7 @@
 from movies.models import Movie
-from django.contrib.auth.models import AbstractUser
 from .user_factories import create_employee_with_token
 
-
-def create_movie_with_employee(
-    movie_data: dict = None, employee: AbstractUser = None
-) -> Movie:
+def create_movie_with_employee(movie_data=None, employee=None):
     if not employee:
         employee, _ = create_employee_with_token()
 
@@ -14,28 +10,14 @@ def create_movie_with_employee(
             "title": "Revolver",
             "duration": "110min",
             "rating": "R",
-            "synopsis": "Jake Green is a hotshot gambler, long on audacity and short on...",
+            "synopsis": "Jake Green is a hotshot gambler...",
         }
 
-    movie = Movie.objects.create(**movie_data, user=employee)
+    return Movie.objects.create(**movie_data, added_by=employee)
 
-    return movie
-
-
-def create_multiple_movies_with_employee(
-    employee: AbstractUser, movies_count: int
-) -> list[Movie]:
+def create_multiple_movies_with_employee(employee, movies_count):
     movies_data = [
-        {
-            "title": f"Movie {index}",
-            "duration": "110min",
-            "rating": "R",
-            "synopsis": "Jake Green is a hotshot gambler, long on audacity and short on...",
-            "user": employee,
-        }
-        for index in range(0, movies_count)
+        {"title": f"Movie {i}", "duration": "110min", "rating": "R", "added_by": employee}
+        for i in range(movies_count)
     ]
-    movies_objects = [Movie(**movie_data) for movie_data in movies_data]
-    movies = Movie.objects.bulk_create(movies_objects)
-
-    return movies
+    return Movie.objects.bulk_create([Movie(**movie_data) for movie_data in movies_data])

@@ -16,12 +16,20 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from drf_spectacular.views import (
+    SpectacularAPIView,
+    SpectacularSwaggerView,
+    SpectacularRedocView,
+)
 
 def home(request):
     return HttpResponse("<h1>Bem-vindo ao site!</h1>")
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("movies.urls")),  # Exemplo
+    path("api/", include("movies.urls")),  # Inclua outras rotas de apps aqui
+    path("api/schema/", SpectacularAPIView.as_view(), name="schema"),
+    path("api/docs/", SpectacularSwaggerView.as_view(url_name="schema"), name="swagger-ui"),
+    path("api/redoc/", SpectacularRedocView.as_view(url_name="schema"), name="redoc"),
     path("", home),  # Página inicial
 ]

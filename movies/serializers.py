@@ -15,8 +15,8 @@ class MovieSerializer(serializers.ModelSerializer):
 class MovieOrderSerializer(serializers.ModelSerializer):
     class Meta:
         model = MovieOrder
-        fields = ['id', 'movie', 'price', 'ordered_by', 'order_date']
-        read_only_fields = ['id', 'ordered_by', 'order_date']
+        fields = ['id', 'movie', 'price', 'ordered_by', 'created_at']  # Corrigido: 'order_date' substituído por 'created_at'
+        read_only_fields = ['id', 'ordered_by', 'created_at']
 
     def create(self, validated_data):
         validated_data['ordered_by'] = self.context['request'].user

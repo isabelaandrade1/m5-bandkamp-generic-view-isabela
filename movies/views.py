@@ -1,17 +1,20 @@
-# movies/views.py
 from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.pagination import PageNumberPagination
 from .models import Movie, MovieOrder
 from .serializers import MovieSerializer, MovieOrderSerializer
-from rest_framework.pagination import PageNumberPagination
 
 class MoviePagination(PageNumberPagination):
     page_size = 10
 
+class IsEmployeePermission(IsAuthenticated):
+    def has_permission(self, request, view):
+        return super().has_permission(request, view) and getattr(request.user, 'is_employee', False)
+
 class MovieView(ListCreateAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsEmployeePermission]
     pagination_class = MoviePagination
 
     def perform_create(self, serializer):
@@ -20,13 +23,9 @@ class MovieView(ListCreateAPIView):
 class MovieDetailView(RetrieveUpdateDestroyAPIView):
     queryset = Movie.objects.all()
     serializer_class = MovieSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsEmployeePermission]
 
-class MovieOrderDetailView(ListCreateAPIView):
+class MovieOrderDetailView(ListCreateAPIView):  # Confirmação do nome correto
     queryset = MovieOrder.objects.all()
     serializer_class = MovieOrderSerializer
     permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(ordered_by=self.request.user)
-
