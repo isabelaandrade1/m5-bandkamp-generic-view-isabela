@@ -1,28 +1,19 @@
-from rest_framework.generics import GenericAPIView, RetrieveAPIView
-from rest_framework.mixins import CreateModelMixin
-from rest_framework.response import Response
-from rest_framework_simplejwt.views import TokenObtainPairView
-from rest_framework_simplejwt.authentication import JWTAuthentication
-from users.permissions import PermissionsPersonalized
-from .serializers import UserSerializer, JWTSerializer
+from rest_framework.views import APIView, Request, Response, status
+from rest_framework import generics
 from .models import User
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from .serializers import UserSerializer
+from django.shortcuts import get_object_or_404
+from .permissions import IsAccountOwner
 
-class UserView(GenericAPIView, CreateModelMixin):
+
+class UserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 
-    def post(self, request, *args, **kwargs):
-        return self.create(request, *args, **kwargs)
-
-class UserDetailView(RetrieveAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
+class UserDetailView(generics.RetrieveUpdateDestroyAPIView):
     authentication_classes = [JWTAuthentication]
-    permission_classes = [PermissionsPersonalized]
-
-    def get_object(self):
-        user_id = self.kwargs['user_id']
-        return self.queryset.get(id=user_id)
-
-class UserLogin(TokenObtainPairView):
-    serializer_class = JWTSerializer
+    permission_classes = [IsAccountOwner]
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+   

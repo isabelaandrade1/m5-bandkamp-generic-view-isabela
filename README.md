@@ -1,4 +1,4 @@
-# M5 - Kenzie Buster
+# M5 - BandKamp Generic View
 
 ## Instalação dos pacotes de teste
 
@@ -29,10 +29,10 @@ python -m venv venv
 2. Ative seu venv:
 ```bash
 # linux:
-source venv/bin/activate
+source venv/Scripts/activate
 
 # windows:
-.\venv\Scripts\activate
+.\venv\\activate
 ```
 
 3. Instale o pacote `pytest-testdox`:
@@ -40,35 +40,32 @@ source venv/bin/activate
 pip install pytest-testdox pytest-django
 ```
 
-5. Vá até o arquivo `pytest.ini` e modifique o nome do projeto `my_project_name.settings` para o nome do **seu_projeto**.settings (onde se encontra o settings.py)
 
 4. Agora é só rodar os testes no diretório principal do projeto:
 ```shell
 pytest --testdox -vvs
 ```
 
-
-
-## Rodando os testes de cada tarefa isoladamente
-
-Ao fim de cada tarefa será possível executar uma suite de testes direcionada àquela tarefa específica. Lembre-se de sempre estar com o **virtual enviroment (venv) ativado**.
-
-- Rodando testes da Tarefa 1:
-```python
-pytest --testdox -vvs tests/tarefas/t1/
+5. Caso queira um log mais resumido, basta executar com os testes sem as flags **verbose**:
+```shell
+pytest --testdox
 ```
 
-- Rodando testes da Tarefa 2:
+## Rodando os testes por partes
+
+Caso você tenha interesse em rodar apenas um diretório de testes específico, pode utilizar o comando:
+
+- Rodando testes de users:
 ```python
-pytest --testdox -vvs tests/tarefas/t2/
+pytest --testdox -vvs tests/users/
 ```
 
-- Rodando testes da Tarefa 3:
+- Rodando testes de albums:
 ```python
-pytest --testdox -vvs tests/tarefas/t3/
+pytest --testdox -vvs tests/albums/
 ```
 
-- Rodando testes da Tarefa 4:
+- Rodando testes de songs:
 ```python
-pytest --testdox -vvs tests/tarefas/t4/
+pytest --testdox -vvs tests/songs/
 ```
